@@ -12,6 +12,21 @@ class Function:
         raise NotImplementedError
 
 
+class Tanh(Function):
+    def __init__(self):
+        super().__init__()
+
+    def output(self, x):
+        self.unactivated_output = x
+        return np.tanh(x)
+
+    def unactivated_error(self, layer_output_error):
+        return layer_output_error * self.func_prime(self.unactivated_output)
+
+    def func_prime(self, x):
+        return 1 - self.output(x) ** 2
+
+
 class Softmax(Function):
     def __init__(self):
         super().__init__()

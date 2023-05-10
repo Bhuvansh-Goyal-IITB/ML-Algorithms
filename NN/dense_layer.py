@@ -1,6 +1,6 @@
 import numpy as np
-from layer import Layer
-from activation import Function
+from NN.layer import Layer
+from NN.activation import Function
 
 
 class Dense(Layer):
@@ -20,14 +20,18 @@ class Dense(Layer):
 
     def back_propagation(self, layer_output_error, learning_rate):
         if self.activation is not None:
-            unactivated_error = self.activation.unactivated_output(layer_output_error)
+            unactivated_error = self.activation.unactivated_error(layer_output_error)
         else:
             unactivated_error = layer_output_error
 
         weight_error = np.matmul(unactivated_error, np.transpose(self.input))
-        bias_error = np.reshape(np.sum(unactivated_error, axis=1), np.shape(self.bias))
+        bias_error = np.reshape(np.sum(unactivated_error, axis=1), [np.shape(self.bias)[0], np.shape(self.bias)[1]])
 
         self.weight -= learning_rate * weight_error
         self.bias -= learning_rate * bias_error
 
         return np.matmul(np.transpose(self.weight), unactivated_error)
+
+    def reset_parameters(self):
+        self.weight = np.random.rand(np.shape(self.weight)[0], np.shape(self.weight)[1]) - 0.5
+        self.bias = np.random.rand(np.shape(self.bias)[0], 1) - 0.5
